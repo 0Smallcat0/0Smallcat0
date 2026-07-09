@@ -1,11 +1,23 @@
 # 0Smallcat0
 
-Quant & AI-systems engineer. I build **verifiable** data and AI products — where the
-hard part is proving the thing works, not demoing that it runs.
+Quant & AI-systems engineer. I build data and AI systems whose outputs you can
+actually **check** — the hard part is proving the thing works, not demoing that it runs.
+
+I like building the boring, dependable plumbing that ambitious AI and trading systems
+stand on: financial infrastructure, agent tooling, and trustworthy retrieval.
+
+🧪 **1,000+ automated tests** &nbsp;·&nbsp; 📦 **5 shipped projects** &nbsp;·&nbsp; 🐍 **100k+ lines of Python** &nbsp;·&nbsp; ⚛️ TS / React frontends
 
 **Core stack:** Python · FastAPI · TypeScript / React · LLM + RAG · MCP / agent tooling
 
-- 🧪 **1,000+ automated tests** across projects — validation gates over vibes.
+```mermaid
+flowchart LR
+    H["Human · plain-language intent"] --> A["AI agent"]
+    A -->|MCP tool surface| S["Systems<br/>terminal · signals · RAG · reports"]
+    S -->|"verified output + audit trail"| H
+```
+
+- 🧪 **Tested to the hilt** — validation gates over vibes; every project ships with its own suite.
 - 🛡️ **Overfitting & hallucination guards** built in, not bolted on (PBO / DSR / holdout; five-gate RAG).
 - 🤖 **Agent-operated** systems — MCP tool surfaces and deterministic agent pipelines.
 
