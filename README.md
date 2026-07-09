@@ -1,38 +1,48 @@
 # 0Smallcat0
 
-Quant & AI-systems engineer. I build data and AI systems whose outputs you can
-actually **check** — the hard part is proving the thing works, not demoing that it runs.
+Final-year Mechanical Engineering student at **National Cheng Kung University**, moving into
+research on **trustworthy AI agents for finance** — making AI-generated strategies and
+analysis **reproducible, verifiable, and auditable**.
 
-I like building the boring, dependable plumbing that ambitious AI and trading systems
-stand on: financial infrastructure, agent tooling, and trustworthy retrieval.
+> The question I keep coming back to: when an AI can generate code, generate analysis, and
+> even operate a system directly, **how do we confirm its output is trustworthy?** In finance
+> this bites hard — a backtest that overstates performance, or an analysis that quietly
+> invents a number, costs real money.
 
-🧪 **1,000+ automated tests** &nbsp;·&nbsp; 📦 **5 shipped projects** &nbsp;·&nbsp; 🐍 **100k+ lines of Python** &nbsp;·&nbsp; ⚛️ TS / React frontends
-
-**Core stack:** Python · FastAPI · TypeScript / React · LLM + RAG · MCP / agent tooling
+I work **agent-first**: I design the systems, specify the validation that decides
+accept-or-reject, and judge the results; AI coding agents (Claude Code / Codex) do the
+implementation. The part I care about — and want to research — is *the checking layer*.
 
 ```mermaid
 flowchart LR
-    H["Human · plain-language intent"] --> A["AI agent"]
-    A -->|MCP tool surface| S["Systems<br/>terminal · signals · RAG · reports"]
-    S -->|"verified output + audit trail"| H
+    A["AI agent<br/>strategy · analysis · actions"] --> V{"Verification layer<br/>gates · provenance · holdout"}
+    V -->|passes| OK["Trustworthy output"]
+    V -->|can't prove| STOP["Reject / abstain"]
 ```
 
-- 🧪 **Tested to the hilt** — validation gates over vibes; every project ships with its own suite.
-- 🛡️ **Overfitting & hallucination guards** built in, not bolted on (PBO / DSR / holdout; five-gate RAG).
-- 🤖 **Agent-operated** systems — MCP tool surfaces and deterministic agent pipelines.
+### 🔬 Research direction
 
-### 🔭 Currently building
+Trustworthy, auditable AI agents in quantitative finance, along two lines I'm prototyping:
 
-- **otto** — a financial terminal an AI operates end-to-end over MCP; the human just watches the dashboard.
-- **crypto-quant-signal** — honest daily crypto signals behind an anti-overfitting gate, with a paper-trading scoreboard.
+- **Strategy trustworthiness** — can overfitting be caught reliably? Validation gates
+  (trial registration · PBO · DSR · single-use holdout · no-look-ahead contract) against a
+  naïve-backtest baseline.
+- **Analysis faithfulness** — a retrieval finance agent with a *number-provenance verifier*:
+  every figure must trace to a source, or the agent abstains. Evaluated against public
+  benchmarks (FinanceBench, DocFinQA, FinBen, Finance Agent Benchmark).
 
-### 📌 Featured projects
+### 🧪 Project testbeds
 
-- **[crypto-quant-signal](https://github.com/0Smallcat0/crypto-quant-signal)** — crypto spot daily-signal system with an anti-overfitting validation gate (PBO / DSR / single-use holdout) and a paper scoreboard. Public data only, no API keys.
-- **[otto](https://github.com/0Smallcat0/otto)** — local, AI-operated financial terminal (FastAPI + React + MCP), safety-gated and clean-room built.
-- **[legal-agent](https://github.com/0Smallcat0/legal-agent)** — retrieval-first Taiwan legal assistant with a five-gate anti-hallucination pipeline.
-- **[report-workflow](https://github.com/0Smallcat0/report-workflow)** — deterministic source-to-DOCX report pipeline for agent environments.
-- **[OpenRead](https://github.com/0Smallcat0/OpenRead)** — transparent, "bring your own key" browser extension for web & PDF translation.
+Research prototypes for the question above — built to be *evaluated*, not shipped:
 
-![0Smallcat0's GitHub stats](https://github-readme-stats.vercel.app/api?username=0Smallcat0&show_icons=true&hide_border=true&count_private=true&theme=github_dark#gh-dark-mode-only)
-![0Smallcat0's GitHub stats](https://github-readme-stats.vercel.app/api?username=0Smallcat0&show_icons=true&hide_border=true&count_private=true#gh-light-mode-only)
+- **[crypto-quant-signal](https://github.com/0Smallcat0/crypto-quant-signal)** — spot, long-only, public-data daily signals behind six validation gates, with a paper-trading scoreboard. Paper-only; never touches a live account.
+- **[legal-agent](https://github.com/0Smallcat0/legal-agent)** — retrieval-first Taiwan legal assistant: five anti-hallucination gates + a time-sliced statute store that cites the law in force at the event's date. My deepest system-design work, and the seed of this research direction.
+- **[otto](https://github.com/0Smallcat0/otto)** — a financial terminal an AI operates end-to-end over MCP, with hard paper/live safety isolation — a testbed for *auditable* agent-operated systems.
+- **[report-workflow](https://github.com/0Smallcat0/report-workflow)** · **[OpenRead](https://github.com/0Smallcat0/OpenRead)** — deterministic source-to-DOCX reporting with traceable provenance; a bring-your-own-key web/PDF translation extension.
+
+### 👋 About
+
+Self-taught career-changer (mechanical engineering → AI / quant finance). Strong at
+decomposing problems, prototyping fast with AI tooling, and validation / risk thinking;
+seeking graduate research training to deepen the statistics and evaluation methodology
+behind all of it. 中文（母語）· English (C1) · 日本語（基礎）.
