@@ -1,4 +1,4 @@
-# 0Smallcat0
+# CC Tsai
 
 Final-year Mechanical Engineering student at **National Cheng Kung University**, moving into
 research on **trustworthy AI agents for finance** — making AI-generated strategies and
