@@ -36,8 +36,9 @@ Trustworthy, auditable AI agents in quantitative finance, along two lines I'm pr
 Research prototypes for the question above — built to be *evaluated*, not shipped:
 
 - **[crypto-quant-signal](https://github.com/0Smallcat0/crypto-quant-signal)** — spot, long-only, public-data daily signals behind six validation gates, with a paper-trading scoreboard. Paper-only; never touches a live account.
+- **[trialgate](https://github.com/0Smallcat0/trialgate)** — that validation gate extracted into a zero-dependency package on [PyPI](https://pypi.org/project/trialgate/) (trial registry · CSCV/PBO · DSR · single-use holdout): the working prototype of the “strategy trustworthiness” line above. It has already rejected one of my own strategies on a locked holdout.
 - **[legal-agent](https://github.com/0Smallcat0/legal-agent)** — retrieval-first Taiwan legal assistant: five anti-hallucination gates + a time-sliced statute store that cites the law in force at the event's date. My deepest system-design work, and the seed of this research direction.
-- **[otto](https://github.com/0Smallcat0/otto)** — a financial terminal an AI operates end-to-end over MCP, with hard paper/live safety isolation — a testbed for *auditable* agent-operated systems.
+- **[otto](https://github.com/0Smallcat0/otto)** — a financial terminal an AI operates end-to-end over MCP, with hard paper/live safety isolation — a testbed for *auditable* agent-operated systems. [v1.0.0](https://github.com/0Smallcat0/otto/releases/tag/v1.0.0) ships a 20-task agent-operability benchmark graded programmatically (state assertions, artifacts, refusal-with-state-unchanged — no LLM judge): claude-sonnet-5 **20/20**, claude-haiku-4-5 **19/20**.
 - **[report-workflow](https://github.com/0Smallcat0/report-workflow)** · **[OpenRead](https://github.com/0Smallcat0/OpenRead)** — deterministic source-to-DOCX reporting with traceable provenance; a bring-your-own-key web/PDF translation extension.
 
 ### 👋 About
