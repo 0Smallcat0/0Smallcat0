@@ -98,3 +98,7 @@ Self-taught career-changer (mechanical engineering → AI / quant finance). Stro
 decomposing problems, prototyping fast with AI tooling, and validation / risk thinking;
 seeking graduate research training to deepen the statistics and evaluation methodology
 behind all of it. 中文（母語）· English (C1) · 日本語（基礎）.
+
+Since **August 2026** I've been in a mentored remote internship in quantitative research and
+data engineering — the first work of this kind I'm doing to someone else's brief rather than
+my own.
