@@ -22,24 +22,75 @@ flowchart LR
 
 ### 🔬 Research direction
 
-Trustworthy, auditable AI agents in quantitative finance, along two lines I'm prototyping:
+Trustworthy, auditable AI agents in quantitative finance, along two lines I'm prototyping.
+Each line has a working prototype and a *measured* result — including the ones that went
+against me.
 
 - **Strategy trustworthiness** — can overfitting be caught reliably? Validation gates
-  (trial registration · PBO · DSR · single-use holdout · no-look-ahead contract) against a
-  naïve-backtest baseline.
-- **Analysis faithfulness** — a retrieval finance agent with a *number-provenance verifier*:
-  every figure must trace to a source, or the agent abstains. Evaluated against public
-  benchmarks (FinanceBench, DocFinQA, FinBen, Finance Agent Benchmark).
+  (trial registration · CSCV/PBO · DSR · single-use holdout · no-look-ahead contract) against
+  a naïve-backtest baseline. **On record: three pre-registered FAILs, adjudicated and
+  published rather than buried.**
+- **Analysis faithfulness** — retrieval agents with a *provenance verifier*: every figure and
+  citation must trace to a source, or the claim is blocked and the agent abstains. **Measured,
+  not asserted:** 0% false positives on hand-built red-team suites, 0.06% on 10,000 pairs of a
+  public benchmark nobody here wrote.
 
-### 🧪 Project testbeds
+### 🧪 Strategy trustworthiness
 
-Research prototypes for the question above — built to be *evaluated*, not shipped:
+- **[trialgate](https://github.com/0Smallcat0/trialgate)** — the validation gate as a
+  zero-dependency, fully typed package on [PyPI](https://pypi.org/project/trialgate/): trial
+  registry · CSCV/PBO · Deflated Sharpe · single-use holdout lock. The working prototype of
+  this research line. It has already rejected one of my own strategies.
+- **[tw-stock-trading](https://github.com/0Smallcat0/tw-stock-trading)** — that rejection, in
+  full. Three pre-registered timing experiments on **21.2 years** of Taiwan 0050 total-return
+  data, net of statutory costs. Drawdown protection passed (26.3% vs 55.8%); the CAGR cost
+  failed the pre-registered claim (4.91%/yr vs 10.21% buy-and-hold). **Verdict: three FAILs,
+  and per the stop rule the production runtime was never built.** The honest answer was
+  buy-and-hold.
+- **[crypto-quant-signal](https://github.com/0Smallcat0/crypto-quant-signal)** — the same six
+  gates on a running crypto testbed: spot, long-only, public data, daily signals, a 1000 USDT
+  paper scoreboard. Holdout still sealed; a ≥3-month paper qualification runs until October
+  before the pass/fail report. No API keys, no live orders — by product definition. A
+  two-minute offline demo replays 713 decision cycles with no network.
 
-- **[crypto-quant-signal](https://github.com/0Smallcat0/crypto-quant-signal)** — spot, long-only, public-data daily signals behind six validation gates, with a paper-trading scoreboard. Paper-only; never touches a live account.
-- **[trialgate](https://github.com/0Smallcat0/trialgate)** — that validation gate extracted into a zero-dependency package on [PyPI](https://pypi.org/project/trialgate/) (trial registry · CSCV/PBO · DSR · single-use holdout): the working prototype of the “strategy trustworthiness” line above. It has already rejected one of my own strategies on a locked holdout.
-- **[legal-agent](https://github.com/0Smallcat0/legal-agent)** — retrieval-first Taiwan legal assistant: five anti-hallucination gates + a time-sliced statute store that cites the law in force at the event's date. My deepest system-design work, and the seed of this research direction.
-- **[otto](https://github.com/0Smallcat0/otto)** — a financial terminal an AI operates end-to-end over MCP, with hard paper/live safety isolation — a testbed for *auditable* agent-operated systems. [v1.0.0](https://github.com/0Smallcat0/otto/releases/tag/v1.0.0) ships a 20-task agent-operability benchmark graded programmatically (state assertions, artifacts, refusal-with-state-unchanged — no LLM judge): claude-sonnet-5 **20/20**, claude-haiku-4-5 **19/20**.
-- **[report-workflow](https://github.com/0Smallcat0/report-workflow)** · **[OpenRead](https://github.com/0Smallcat0/OpenRead)** — deterministic source-to-DOCX reporting with traceable provenance; a bring-your-own-key web/PDF translation extension.
+### 🧪 Analysis faithfulness
+
+- **[report-workflow](https://github.com/0Smallcat0/report-workflow)** — a deterministic gate
+  layer between an LLM and the document it hands you: a number, quote or reference that is not
+  in your sources never reaches the page, and you are told which sentence and why. The gate
+  itself calls no model. Evidence, not adjectives: **88.6% recall / 0% false positives** on a
+  44-case red-team suite (all 15 attack families caught at 100%; the surviving evasions are
+  kept in the test set on purpose), and **0.06% false positives / 99.7% block precision**
+  out of domain on HaluEval's 10,000 QA pairs. On PyPI and shipped as an MCP server; 917
+  tests, CI green.
+- **[legal-agent](https://github.com/0Smallcat0/legal-agent)** — a RAG pipeline where every
+  citation is checked by code, and *the checker is itself graded* by seeding errors into
+  otherwise-correct answers: **11,904 / 11,904 caught, 0 false positives**. A time-sliced
+  statute store cites the law in force at the event's date (`as_of=`), and the whole pipeline
+  runs with no model, no key and no network — which is also how it is tested. My deepest
+  system-design work, and the seed of this research direction.
+  **[Live demo](https://huggingface.co/spaces/NoirOAO/legal-agent-demo)** — about thirty
+  seconds; it ships a pre-filled broken answer to check for yourself.
+
+### 🧪 Auditable agent operation
+
+- **[otto](https://github.com/0Smallcat0/otto)** — a local financial terminal an AI operates
+  end-to-end over MCP, one `claude mcp add` away. Two things make it a testbed rather than a
+  toy. **Agent operability is a benchmark, not a tagline**: a real headless agent runs
+  plain-language tasks in hermetic sandboxes, graded programmatically on terminal state and
+  artifacts, never by an LLM judge (`claude-sonnet-5` **20/20** on the 20-task suite,
+  2026-07-10 — the suite has since grown, so those figures are dated rather than current).
+  And **safety is structural rather than switched off**: live trading and credential entry are
+  unreachable through the surface the agent has, and refusal tasks are graded on *state
+  unchanged*. It also keeps a scorecard of its own dated calls, and publishes it when the
+  calls are bad.
+
+### 🛠️ Also
+
+- **[OpenRead](https://github.com/0Smallcat0/OpenRead)** — read the web and your PDFs in your
+  own language without sending a word of it anywhere: Chrome's on-device translator by
+  default (Ollama as a fallback engine), bilingual output under each paragraph, Traditional
+  Chinese that reads like Taiwan. No account, no API key, no cloud.
 
 ### 👋 About
 
