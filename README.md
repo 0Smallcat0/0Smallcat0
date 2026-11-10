@@ -6,8 +6,7 @@ one question: when an AI can generate code, generate analysis, and operate a sys
 overstates performance, or an analysis that quietly invents a number, costs real money.
 
 I design the systems, specify the validation that decides accept-or-reject, and judge the
-results; AI tools (Claude Code, Codex) do the implementation. The part I care about is
-*the checking layer*.
+results. The part I care about is *the checking layer*.
 
 ```mermaid
 flowchart LR
