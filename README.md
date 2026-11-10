@@ -1,17 +1,13 @@
 # CC Tsai
 
-Final-year Mechanical Engineering student at **National Cheng Kung University**, moving into
-research on **trustworthy AI agents for finance** — making AI-generated strategies and
-analysis **reproducible, verifiable, and auditable**.
+Final-year Mechanical Engineering student at **National Cheng Kung University**, working on
+one question: when an AI can generate code, generate analysis, and operate a system directly,
+**how do we confirm its output is trustworthy?** In finance this bites hard: a backtest that
+overstates performance, or an analysis that quietly invents a number, costs real money.
 
-> The question I keep coming back to: when an AI can generate code, generate analysis, and
-> even operate a system directly, **how do we confirm its output is trustworthy?** In finance
-> this bites hard — a backtest that overstates performance, or an analysis that quietly
-> invents a number, costs real money.
-
-I work **agent-first**: I design the systems, specify the validation that decides
-accept-or-reject, and judge the results; AI coding agents (Claude Code / Codex) do the
-implementation. The part I care about — and want to research — is *the checking layer*.
+I design the systems, specify the validation that decides accept-or-reject, and judge the
+results; AI tools (Claude Code, Codex) do the implementation. The part I care about is
+*the checking layer*.
 
 ```mermaid
 flowchart LR
@@ -20,85 +16,115 @@ flowchart LR
     V -->|can't prove| STOP["Reject / abstain"]
 ```
 
-### 🔬 Research direction
+### Research direction
 
-Trustworthy, auditable AI agents in quantitative finance, along two lines I'm prototyping.
-Each line has a working prototype and a *measured* result — including the ones that went
-against me.
+**Emulation or recitation?** LLM trading agents placed in simulated markets show human-like
+behavioural biases. My proposed study asks whether the agent *computes* that behaviour or
+*recognises* it from its label. The agent gets identical numbers twice: once under field names
+that name a known bias (purchase price, all-time high, unrealised P&L), once under neutral
+names in random order. If the bias survives the renaming, the published result gets stronger;
+if it disappears, the result needs narrowing. Either answer is a finding.
 
-- **Strategy trustworthiness** — can overfitting be caught reliably? Validation gates
-  (trial registration · CSCV/PBO · DSR · single-use holdout · no-look-ahead contract) against
-  a naïve-backtest baseline. **On record: three pre-registered FAILs, adjudicated and
-  published rather than buried.**
-- **Analysis faithfulness** — retrieval agents with a *provenance verifier*: every figure and
-  citation must trace to a source, or the claim is blocked and the agent abstains. **Measured,
-  not asserted:** 0% false positives on hand-built red-team suites, 0.06% on 10,000 pairs of a
-  public benchmark nobody here wrote.
+One research question, one primary outcome (the all-time-high anomaly effect size, named vs
+de-named), with sample size, stop rule and multiple-comparison correction registered before
+the first run. Platform: [PAMS](https://arxiv.org/abs/2309.10729); baseline:
+FCLAgent ([arXiv:2510.12189](https://arxiv.org/abs/2510.12189)).
 
-### 🧪 Strategy trustworthiness
+The projects below are the experimental discipline that study runs on: pre-registration,
+single-use holdouts, and checkers that are themselves measured.
 
-- **[trialgate](https://github.com/0Smallcat0/trialgate)** — the validation gate as a
-  zero-dependency, fully typed package on [PyPI](https://pypi.org/project/trialgate/): trial
-  registry · CSCV/PBO · Deflated Sharpe · single-use holdout lock. The working prototype of
-  this research line. It has already rejected one of my own strategies.
-- **[tw-stock-trading](https://github.com/0Smallcat0/tw-stock-trading)** — that rejection, in
-  full. Three pre-registered timing experiments on **21.2 years** of Taiwan 0050 total-return
-  data, net of statutory costs. Drawdown protection passed (26.3% vs 55.8%); the CAGR cost
-  failed the pre-registered claim (4.91%/yr vs 10.21% buy-and-hold). **Verdict: three FAILs,
-  and per the stop rule the production runtime was never built.** The honest answer was
-  buy-and-hold.
-- **[crypto-quant-signal](https://github.com/0Smallcat0/crypto-quant-signal)** — the same six
-  gates on a running crypto testbed: spot, long-only, public data, daily signals, a 1000 USDT
-  paper scoreboard. Holdout still sealed; a ≥3-month paper qualification runs until October
-  before the pass/fail report. No API keys, no live orders — by product definition. A
-  two-minute offline demo replays 713 decision cycles with no network.
+### Strategy validation
 
-### 🧪 Analysis faithfulness
+- **[trialgate](https://github.com/0Smallcat0/trialgate)** — stops you putting real money on
+  a backtest that was only luck. A zero-dependency, `mypy --strict` library and CLI on
+  [PyPI](https://pypi.org/project/trialgate/): a hash-chained registry records every backtest
+  you run, then nine gates judge the best one (CSCV/PBO, Deflated Sharpe, single-use holdout,
+  cost stress, stop-line survivability, live deviation bands). Reads freqtrade and Optuna
+  runs directly, and exits 1 so it can block a deploy. Its 30-second demo finds an annualized
+  Sharpe of 1.20 in a random walk across 450 configurations; the gates return NOT QUALIFIED.
+- **[tw-stock-trading](https://github.com/0Smallcat0/tw-stock-trading)** — can a retail,
+  long-only, public-data strategy beat buying and holding Taiwan's 0050 ETF? Four
+  pre-registered routes on **21.2 years** of total-return data, net of statutory costs, each
+  judged once against a claim written down before any backtest ran. The trend rule cut the
+  worst drawdown to 26.3% against 55.8%, at 4.91%/yr against buy-and-hold's 10.21%. No route
+  met its pre-registered claim, so by the stop rule the production runtime was never built
+  and the holdout stays sealed. Separate AI agents were asked to overturn the verdict and
+  could not: a benchmark rebuilt from outside sources deviated 0.0pp.
+- **[crypto-quant-signal](https://github.com/0Smallcat0/crypto-quant-signal)** — a daily
+  spot, long-only signal system behind six gates, with a 1000 USDT paper scoreboard and no
+  API keys or live orders by product definition. **133 registered trials across eleven
+  pre-registered families**; the best candidate cleared the deflation gate (DSR 0.9505) and
+  was then run unchanged on 21 years of Taiwan data, which showed it was a fit, not an edge.
+  The program closed on 2026-10-16 with the single-use holdout never opened and every
+  pre-registration, result and correction committed. A two-minute offline demo replays 713
+  decision cycles with no network.
 
-- **[report-workflow](https://github.com/0Smallcat0/report-workflow)** — a deterministic gate
-  layer between an LLM and the document it hands you: a number, quote or reference that is not
-  in your sources never reaches the page, and you are told which sentence and why. The gate
-  itself calls no model. Evidence, not adjectives: **88.6% recall / 0% false positives** on a
-  44-case red-team suite (all 15 attack families caught at 100%; the surviving evasions are
-  kept in the test set on purpose), and **0.06% false positives / 99.7% block precision**
-  out of domain on HaluEval's 10,000 QA pairs. On PyPI and shipped as an MCP server; 917
-  tests, CI green.
-- **[legal-agent](https://github.com/0Smallcat0/legal-agent)** — a RAG pipeline where every
-  citation is checked by code, and *the checker is itself graded* by seeding errors into
-  otherwise-correct answers: **11,904 / 11,904 caught, 0 false positives**. A time-sliced
-  statute store cites the law in force at the event's date (`as_of=`), and the whole pipeline
-  runs with no model, no key and no network — which is also how it is tested. My deepest
-  system-design work, and the seed of this research direction.
+### Analysis faithfulness
+
+- **[report-workflow](https://github.com/0Smallcat0/report-workflow)** — give your AI the
+  files you already have and one sentence; get back a Word document you can hand in. A
+  number, quote or reference that is not in your files never reaches the page, and you are
+  told which sentence and why. The gate calls no model. **89.1% recall / 0% false positives**
+  on a 73-case hand-audited red-team suite, and **0.11% false positives (11/10,000) / 99.6%
+  block precision** on HaluEval's 10,000 QA pairs, a public benchmark nobody here wrote. Its
+  reference checker caught 30 of 33 problem references in a hand-verified set of 104, and all
+  13 it called wrong were wrong. On [PyPI](https://pypi.org/project/report-workflow/) and
+  shipped as an MCP server for Claude Code, Codex and Cursor; 1,471 tests, CI green.
+- **[legal-agent](https://github.com/0Smallcat0/legal-agent)** — understand your situation
+  before you pay a lawyer: describe the dispute in everyday words and get the governing
+  Taiwan statutes, the steps from free mediation to court, and judgments citing the same
+  articles. Every citation is checked by code, and *the checker is itself graded* by planting
+  errors into correct answers: **100% caught in each of 24 error kinds, 0 / 3,758 false
+  positives**, across 3,758 articles of 18 statutes. Against the bare model, citations a
+  reader would have to take on trust fall from **67% to 5%**. A time-sliced statute store
+  cites the law in force on the event's date (`as_of=`), and the pipeline runs with no model,
+  no key and no network. My deepest system-design work.
   **[Live demo](https://huggingface.co/spaces/NoirOAO/legal-agent-demo)** — about thirty
   seconds; it ships a pre-filled broken answer to check for yourself.
 
-### 🧪 Auditable agent operation
+### Auditable agent operation
 
-- **[otto](https://github.com/0Smallcat0/otto)** — a local financial terminal an AI operates
-  end-to-end over MCP, one `claude mcp add` away. Two things make it a testbed rather than a
-  toy. **Agent operability is a benchmark, not a tagline**: a real headless agent runs
-  plain-language tasks in hermetic sandboxes, graded programmatically on terminal state and
-  artifacts, never by an LLM judge (`claude-sonnet-5` **20/20** on the 20-task suite,
-  2026-07-10 — the suite has since grown, so those figures are dated rather than current).
-  And **safety is structural rather than switched off**: live trading and credential entry are
-  unreachable through the surface the agent has, and refusal tasks are graded on *state
-  unchanged*. It also keeps a scorecard of its own dated calls, and publishes it when the
-  calls are bad.
+- **[otto](https://github.com/0Smallcat0/otto)** — a local financial terminal an AI agent
+  operates for you over MCP: market data, backtests, paper books and news, driven in plain
+  language on your own machine. **It keeps score**: every call the agent records (a
+  stance, the reasoning, the price that would prove it wrong) is graded later against the
+  price the market printed and against its index. **"An AI can operate it" is measured**: a
+  real headless agent runs plain-language tasks in hermetic sandboxes, graded on terminal
+  state and artifacts, never by an LLM judge. `claude-sonnet-5` and `claude-haiku-4-5` both
+  pass **21 / 21** (2026-08-16). Live trading and credential entry are unreachable through
+  the surface the agent has. One typed contract of 142 actions drives the MCP tools, the UI
+  and the eval suite; 805 tests on Windows and Linux CI.
 
-### 🛠️ Also
+### Mechanical design
 
-- **[OpenRead](https://github.com/0Smallcat0/OpenRead)** — read the web and your PDFs in your
-  own language without sending a word of it anywhere: Chrome's on-device translator by
-  default (Ollama as a fallback engine), bilingual output under each paragraph, Traditional
-  Chinese that reads like Taiwan. No account, no API key, no cloud.
+- **[mechanical-design-demos](https://github.com/0Smallcat0/mechanical-design-demos)** — a
+  design portfolio that opens in the browser, nothing to install.
+  **[Open it](https://0smallcat0.github.io/mechanical-design-demos/)**. A CD-11 cycloidal
+  reducer (3,000 rpm in, 272.7 rpm out, 11:1) you can explode, cut away and load harder,
+  with forces, stress and bearing life calculated live from the same motion, plus
+  engineering drawings and STEP files. And a 4.2 × 5.0 m studio furnished with six real
+  IKEA Taiwan products, each built to the size on its product page.
 
-### 👋 About
+### Also
 
-Self-taught career-changer (mechanical engineering → AI / quant finance). Strong at
-decomposing problems, prototyping fast with AI tooling, and validation / risk thinking;
-seeking graduate research training to deepen the statistics and evaluation methodology
-behind all of it. 中文（母語）· English (C1) · 日本語（基礎）.
+- **[OpenRead](https://github.com/0Smallcat0/OpenRead)** — immersive translation costs money,
+  so I built the free one. Bilingual translation for web pages, PDFs, EPUB books and YouTube
+  captions, on the
+  [Chrome Web Store](https://chromewebstore.google.com/detail/mopclgoefogojkfmigfjpbmnnoiodnmb):
+  Chrome's on-device translator by default, so no account, no API key and no quota.
+  Thirty-nine target languages, and Traditional Chinese that reads like Taiwan.
+- **[samelight](https://github.com/0Smallcat0/samelight)** — beauty ads compare two different
+  photos; SameLight makes them compare two faces. **[Live app](https://samelight.pages.dev)**.
+  It brings a before/after pair to the same focus, exposure and colour, then measures the
+  skin again with the YouCam Skin Analysis API. Tested with known answers: camera tricks
+  alone showed +88 points in the ad and +2 under the same light; a real skin change kept
+  145 of 161.
 
-Since **August 2026** I've been in a mentored remote internship in quantitative research and
-data engineering — the first work of this kind I'm doing to someone else's brief rather than
-my own.
+### About
+
+Mechanical engineering → AI and quantitative finance. Strong at decomposing problems,
+prototyping fast with AI tools, and validation / risk thinking. Applying for graduate study
+starting in 2027. 中文（母語）· English (C1) · 日本語（基礎）.
+
+In **August–September 2026** I completed a mentored remote internship in quantitative
+research and data engineering.
